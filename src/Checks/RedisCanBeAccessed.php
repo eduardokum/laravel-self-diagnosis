@@ -3,6 +3,7 @@
 namespace BeyondCode\SelfDiagnosis\Checks;
 
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 class RedisCanBeAccessed implements Check
 {
@@ -29,13 +30,13 @@ class RedisCanBeAccessed implements Check
     {
         try {
             if (array_get($config, 'default_connection', true)) {
-                if (!Redis::connection()->isConnected()) {
+                if (Str::upper(Redis::connection()->executeRaw(['ping'])) != 'PONG') {
                     return false;
                 }
             }
 
             foreach (array_get($config, 'connections', []) as $connection) {
-                if (!Redis::connection($connection)->isConnected()) {
+                if (Str::upper(Redis::connection($connection)->executeRaw(['ping'])) != 'PONG') {
                     return false;
                 }
             }

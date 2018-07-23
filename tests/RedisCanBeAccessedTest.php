@@ -14,15 +14,14 @@ class RedisCanBeAccessedTest extends TestCase
     public function it_checks_default_cache_access()
     {
         $check = app(RedisCanBeAccessed::class);
-        $this->assertFalse($check->check([]));
 
         /** @var MockObject|Connection $connectionMock */
         $connectionMock = $this->getMockBuilder(Connection::class)
-            ->setMethods(['isConnected', 'createSubscription']) // we have to declare the abstract method createSubscription
+            ->setMethods(['executeRaw', 'createSubscription']) // we have to declare the abstract method createSubscription
             ->getMock();
         $connectionMock->expects($this->once())
-            ->method('isConnected')
-            ->willReturn(true);
+            ->method('executeRaw')
+            ->willReturn('PONG');
 
         Redis::shouldReceive('connection')
             ->withNoArgs()
@@ -45,11 +44,11 @@ class RedisCanBeAccessedTest extends TestCase
 
         /** @var MockObject|Connection $connectionMock */
         $connectionMock = $this->getMockBuilder(Connection::class)
-            ->setMethods(['isConnected', 'createSubscription']) // we have to declare the abstract method createSubscription
+            ->setMethods(['executeRaw', 'createSubscription']) // we have to declare the abstract method createSubscription
             ->getMock();
         $connectionMock->expects($this->once())
-            ->method('isConnected')
-            ->willReturn(true);
+            ->method('executeRaw')
+            ->willReturn('PONG');
 
         Redis::shouldReceive('connection')
             ->with('some_connection')
